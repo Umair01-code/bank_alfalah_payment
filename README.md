@@ -1,7 +1,5 @@
 # Bank Alfalah Payment Package for Flutter
 
-## Product Requirements Document
-
 ### Overview
 
 The Bank Alfalah Payment Package is a Flutter package that simplifies the integration of Bank Alfalah's payment gateway into Flutter applications. This package provides a clean API for developers to integrate payment functionality without having to understand the complex underlying implementation details of Bank Alfalah's payment system.
@@ -104,9 +102,3 @@ test/                                   # Unit and integration tests
 - All requests must use proper hash generation
 - HTTPS must be used for all API calls
 - WebView should have restricted navigation abilities
-
-## Technical Implementation
-
-### Implementation Details
-
-#### 1\. Package Configuration\\
