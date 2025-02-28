@@ -109,4 +109,4 @@ test/                                   # Unit and integration tests
 
 ### Implementation Details
 
-#### 1\. Package Configuration
+#### 1\. Package Configuration\\
