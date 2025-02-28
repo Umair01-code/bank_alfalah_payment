@@ -1,7 +1,9 @@
 name: bank_alfalah_payment
-description: "A new Flutter package project."
+description: "A Flutter package for integrating Bank Alfalah payment gateway in Flutter applications. Simplifies the payment process with easy configuration and WebView handling."
 version: 0.0.1
-homepage:
+homepage: https://github.com/aliarain/bank_alfalah_payment
+repository: https://github.com/aliarain/bank_alfalah_payment
+issue_tracker: https://github.com/aliarain/bank_alfalah_payment/issues
 
 environment:
   sdk: ^3.6.0

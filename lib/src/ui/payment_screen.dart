@@ -31,6 +31,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void initState() {
     super.initState();
 
+    // Set up a timeout
+    _setupTimeout();
+
     // Initialize WebView controller
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -87,6 +90,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     // Load HTML form to submit payment request
     _loadPaymentForm();
+  }
+
+  void _setupTimeout() {
+    // Timeout after 3 minutes
+    Future.delayed(const Duration(minutes: 3), () {
+      if (mounted) {
+        widget.onResult(PaymentResult.error('Payment request timed out'));
+        Navigator.pop(context);
+      }
+    });
   }
 
   void _loadPaymentForm() {

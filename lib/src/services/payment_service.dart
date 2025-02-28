@@ -10,10 +10,18 @@ import '../ui/payment_screen.dart';
 import '../utils/constant.dart';
 import 'hash_service.dart';
 
+/// Service for handling Bank Alfalah payment operations.
+///
+/// This service manages the entire payment lifecycle, from initialization
+/// to processing the final response from the payment gateway.
 class BankAlfalahPaymentService {
   final BankAlfalahConfig _config;
   final HashService _hashService;
 
+  /// Creates a new payment service with the provided configuration.
+  ///
+  /// [config] contains all the necessary credentials and settings for
+  /// connecting to Bank Alfalah's payment gateway.
   BankAlfalahPaymentService({
     required BankAlfalahConfig config,
   })  : _config = config,
@@ -22,10 +30,12 @@ class BankAlfalahPaymentService {
           secondKey: config.secondKey,
         );
 
-  /// Initiates the payment process
+  /// Initiates the payment process.
   ///
-  /// [request] Payment request details
-  /// [context] BuildContext for showing the payment screen
+  /// [request] contains the payment details such as amount and order ID.
+  /// [context] is required to show the payment WebView screen.
+  ///
+  /// Returns a [PaymentResult] indicating the outcome of the payment process.
   Future<PaymentResult> initiatePayment({
     required PaymentRequest request,
     required BuildContext context,
@@ -50,85 +60,39 @@ class BankAlfalahPaymentService {
         BankAlfalahConstants.requestVerificationTokenKey: '',
       };
 
-      // Generate hash for the request
+      // Add request hash
       final requestHash = _hashService.generateHash(data);
       data[BankAlfalahConstants.requestHashKey] = requestHash;
 
-      // Make the initial API call
-      final response = await http.post(
-        Uri.parse(
-            '${BankAlfalahConstants.paymentBaseUrl}${BankAlfalahConstants.paymentEndpoint}'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(data),
-      );
-
-      // Check for HTTP errors
-      if (response.statusCode != 200) {
-        if (_config.debugMode) {
-          print('HTTP Error: ${response.statusCode}, ${response.body}');
-        }
-        return PaymentResult.error('HTTP Error: ${response.statusCode}');
+      if (_config.debugMode) {
+        print('Bank Alfalah Payment - Request Data: $data');
       }
-
-      // Parse response
-      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      // Check for API errors
-      if (responseData['success'] != 'true' &&
-          responseData['success'] != true) {
-        if (_config.debugMode) {
-          print('API Error: ${responseData['message']}');
-        }
-        return PaymentResult.error(responseData['message'] ?? 'Unknown error');
-      }
-
-      // Show payment screen and wait for result
-      final completer = Completer<PaymentResult>();
-
-      // Prepare data for WebView
-      final webViewData = {
-        BankAlfalahConstants.authTokenKey: responseData['AuthToken'].toString(),
-        BankAlfalahConstants.requestHashKey: '',
-        BankAlfalahConstants.channelIdKey: _config.channelId,
-        BankAlfalahConstants.currencyKey: BankAlfalahConstants.defaultCurrency,
-        BankAlfalahConstants.isBinKey: BankAlfalahConstants.defaultIsBin,
-        BankAlfalahConstants.returnUrlKey: _config.returnUrl,
-        BankAlfalahConstants.merchantIdKey: _config.merchantId,
-        BankAlfalahConstants.storeIdKey: _config.storeId,
-        BankAlfalahConstants.merchantHashKey: _config.merchantHash,
-        BankAlfalahConstants.merchantUsernameKey: _config.merchantUsername,
-        BankAlfalahConstants.merchantPasswordKey: _config.merchantPassword,
-        BankAlfalahConstants.transactionTypeIdKey:
-            BankAlfalahConstants.defaultTransactionTypeId,
-        BankAlfalahConstants.transactionReferenceNumberKey: transactionRefNo,
-        BankAlfalahConstants.transactionAmountKey: request.amount,
-      };
-
-      // Generate hash for WebView data
-      final webViewHash = _hashService.generateHash(webViewData);
-      webViewData[BankAlfalahConstants.requestHashKey] = webViewHash;
 
       // Show payment screen
-      Navigator.of(context).push(
+      final completer = Completer<PaymentResult>();
+
+      Navigator.push(
+        context,
         MaterialPageRoute(
           builder: (context) => PaymentScreen(
-            data: webViewData,
+            data: data,
             baseUrl: BankAlfalahConstants.paymentBaseUrl,
             onResult: (result) {
+              Navigator.pop(context);
               completer.complete(result);
-              Navigator.of(context).pop();
             },
-            debugMode: _config.debugMode,
           ),
         ),
       );
 
-      return await completer.future;
-    } catch (e) {
+      return completer.future;
+    } catch (e, stackTrace) {
       if (_config.debugMode) {
-        print('Exception: $e');
+        print('Bank Alfalah Payment - Error: $e');
+        print('Stack trace: $stackTrace');
       }
-      return PaymentResult.error('Payment initialization failed: $e');
+      return PaymentResult.error(
+          'An unexpected error occurred: ${e.toString()}');
     }
   }
 }

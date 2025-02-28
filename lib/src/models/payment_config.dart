@@ -1,3 +1,7 @@
+/// Configuration for Bank Alfalah payment gateway.
+///
+/// Contains all the necessary credentials and settings required to
+/// initialize and process payments through Bank Alfalah's payment gateway.
 class BankAlfalahConfig {
   /// Merchant ID provided by Bank Alfalah
   final String merchantId;
@@ -27,8 +31,14 @@ class BankAlfalahConfig {
   final String secondKey;
 
   /// Flag to enable debug mode
+  ///
+  /// When true, additional logs will be printed to the console
   final bool debugMode;
 
+  /// Creates a new configuration for Bank Alfalah payment gateway.
+  ///
+  /// All parameters except [channelId] and [debugMode] are required and
+  /// should be obtained from Bank Alfalah.
   BankAlfalahConfig({
     required this.merchantId,
     required this.merchantPassword,
