@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../models/payment_response.dart';
 import '../models/payment_result.dart';
-import '../utils/constants.dart';
+import '../utils/constant.dart';
 import '../utils/extensions.dart';
 
 class PaymentScreen extends StatefulWidget {
