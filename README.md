@@ -2,6 +2,7 @@
 
 A Flutter package that simplifies the integration of Bank Alfalah's payment gateway into Flutter applications. This package handles the entire payment flow, from initialization to processing the final response.
 
+Umair
 
 ## Features
 - Simple API for payment initialization
